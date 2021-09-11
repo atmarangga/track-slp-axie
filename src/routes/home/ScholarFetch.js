@@ -1,5 +1,6 @@
 import { h, Component } from "preact";
 import { getRoninSlp, addToLocal } from "../../utils/helpers";
+import ErrorText from '../../components/errortext';
 import style from "./style.css";
 
 export default class ScholarFetch extends Component {
@@ -11,6 +12,8 @@ export default class ScholarFetch extends Component {
       playerShare: null,
       investorShare: null,
       loading: false,
+      roninInvalid: false,
+      nameInvalid: false,
     };
   }
 
@@ -89,7 +92,10 @@ export default class ScholarFetch extends Component {
               currentRoninAddress: e?.target?.value,
             });
           }}
+          
         />
+        
+        <ErrorText label="Ronin Address must not be empty" hidden={this.state.roninInvalid} />
         <input
           placeholder="Nick Name ex: Albert D. Einstein"
           class={style.inputronin}
@@ -100,6 +106,7 @@ export default class ScholarFetch extends Component {
           }}
           onBlur={() => {}}
         />
+        <ErrorText label="Give me a name pls" hidden={this.state.nameInvalid} />
         <div class={style.innercontainer}>
           <input
             type="number"
