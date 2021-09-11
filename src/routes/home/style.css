@@ -1,5 +1,43 @@
 .home {
-	padding: 56px 20px;
-	min-height: 100%;
-	width: 100%;
+  padding: 56px 20px;
+  min-height: 100%;
+  width: 100%;
+}
+.inputronin {
+  /* width: 33%; */
+  width: 480px;
+  max-width: 95%;
+  padding: 5px;
+  margin: 5px 0px;
+}
+.inputshare {
+  /* width: 110px; */
+  max-width: 27%;
+  padding: 5px;
+  margin: 5px 0px;
+  margin-right: 10px;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 5px;
+}
+.innercontainer {
+  display: flex;
+  flex-direction: row;
+  width: 90%;
+  justify-content: flex-start;
+  align-items: flex-start;
+  
+}
+.addbtn {
+	/* width: 25%; */
+	align-self: center;
+	height: 100%;
+	padding: 5px 20px;
+	margin: 5px;
+	
 }
