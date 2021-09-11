@@ -1,3 +1,4 @@
+const data = "DATA";
 const options = {
   method: "GET",
   headers: {
@@ -66,7 +67,7 @@ export async function getRoninSlp(roninAddress, callBack, callBackError) {
         const resultData = await response.text();
         console.log("response data : ", resultData);
         if (callBack && callBack instanceof Function) {
-          callBack();
+          callBack(JSON.parse(resultData)?.walletData);
         }
       })
       .catch((err) => {
@@ -82,23 +83,98 @@ export async function getRoninSlp(roninAddress, callBack, callBackError) {
   }
 }
 
-export async function addToLocal(ronin, nick, pplayer, pinvestor, callBack) {
+export async function addToLocal(
+  ronin,
+  nick,
+  pplayer,
+  pinvestor,
+  callBack,
+  errorCallback
+) {
   try {
-    const data = "DATA";
     const item = {
       raddr: ronin,
       nick,
       pplayer,
       pinvestor,
     };
-    const currentData = window.localStorage.getItem(data) || [];
+    const currentData = window.localStorage.getItem(data) || "{}";
     const jsonCurrentData = JSON.parse(currentData);
-    jsonCurrentData.push(item);
-    window.localStorage.setItem(JSON.stringify(jsonCurrentData));
-    if (callBack && callBack instanceof Function) {
-      callBack();
+
+    if (jsonCurrentData?.dataPlayer?.length > 0) {
+      if (!checkDuplicate(ronin, jsonCurrentData?.dataPlayer)) {
+        if (!checkNickDuplicate(nick, jsonCurrentData?.dataPlayer)) {
+          jsonCurrentData.dataPlayer.push(item);
+          window.localStorage.setItem(data, JSON.stringify(jsonCurrentData));
+          if (callBack && callBack instanceof Function) {
+            callBack();
+          }
+        } else {
+          errorCallback &&
+            errorCallback instanceof Function &&
+            errorCallback(false);
+        }
+      } else {
+        console.log("duplicate");
+        errorCallback &&
+          errorCallback instanceof Function &&
+          errorCallback(true);
+      }
+    } else {
+      jsonCurrentData.dataPlayer = [];
+      jsonCurrentData.dataPlayer.push(item);
+      window.localStorage.setItem(data, JSON.stringify(jsonCurrentData));
+      if (callBack && callBack instanceof Function) {
+        callBack();
+      }
     }
   } catch (ex) {
     // failed to load
+
+    console.log("could not get / save data ", ex);
   }
+}
+// fetch all data from local storage and put on generic table
+export async function fetchAllData(callBack) {
+  try {
+    const currentData = window.localStorage.getItem(data) || "{}";
+    const jsonCurrentData = JSON.parse(currentData);
+    const { dataPlayer } = jsonCurrentData;
+    const allData = [];
+    if (dataPlayer && dataPlayer.length > 0) {
+      for (let x = 0; x < dataPlayer.length; x += 1) {
+        getRoninSlp(dataPlayer[x]?.raddr, (result) => {
+          allData.push(result);
+          if (
+            x === dataPlayer.length - 1 &&
+            callBack &&
+            callBack instanceof Function
+          ) {
+            //last element
+            callBack(allData);
+          }
+        });
+      }
+    }
+  } catch (ex) {
+    console.log("failed to fetch data : ", ex);
+  }
+}
+
+function checkDuplicate(rnAddress, localData) {
+  for (let a = 0; a < localData.length; a += 1) {
+    if (localData[a]?.raddr === rnAddress) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function checkNickDuplicate(rnNick, localData) {
+  for (let a = 0; a < localData.length; a += 1) {
+    if (localData[a]?.nick === rnNick) {
+      return true;
+    }
+  }
+  return false;
 }

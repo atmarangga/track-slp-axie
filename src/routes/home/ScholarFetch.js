@@ -1,6 +1,6 @@
 import { h, Component } from "preact";
-import { getRoninSlp, addToLocal } from "../../utils/helpers";
-import ErrorText from '../../components/errortext';
+import {  addToLocal, fetchAllData } from "../../utils/helpers";
+import ErrorText from "../../components/errortext";
 import style from "./style.css";
 
 export default class ScholarFetch extends Component {
@@ -12,44 +12,81 @@ export default class ScholarFetch extends Component {
       playerShare: null,
       investorShare: null,
       loading: false,
+      duplicate: false,
       roninInvalid: false,
       nameInvalid: false,
+      allData: [],
     };
   }
 
   componentDidMount() {
     // getRoninSlp('ronin:57883281c943401af0691e9ce0781af67d83ef51',() => {});
+    fetchAllData((res) => {
+      console.log("res : ", res);
+      this.setState(
+        {
+          allData: res,
+        },
+        () => {
+          console.log("state :", this.state);
+        }
+      );
+    });
   }
 
   handleAddButton = () => {
-    console.log("clixk ! :: ", this.state);
     const { currentNickName, currentRoninAddress, playerShare, investorShare } =
       this.state;
+    if (currentNickName && currentRoninAddress) {
+      this.setState({
+        roninValid: false,
+        nameInvalid: false,
+      });
 
-    if(currentNickName && currentRoninAddress){
-      getRoninSlp(
+      addToLocal(
         currentRoninAddress,
+        currentNickName,
+        playerShare,
+        investorShare,
         () => {
-          addToLocal(
-            currentRoninAddress,
-            currentNickName,
-            playerShare,
-            investorShare,
-            () => {
-              this.setState({
-                loading: false,
-              });
-            }
-          );
+          this.setState({
+            loading: false,
+            roninInvalid: false,
+            duplicate: false,
+            nameInvalid: false,
+          });
         },
-        () => {
-          this.setState({ loading: false });
+        (duplicate) => {
+          console.log("duplicate ::::: ", duplicate);
+          if (duplicate) {
+            this.setState({
+              loading: false,
+              roninInvalid: true,
+              duplicate: true,
+            });
+          } else {
+            this.setState({
+              nameInvalid: true,
+              duplicate: true,
+              loading: false,
+            });
+          }
         }
       );
+    } else {
+      let nick = false;
+      let ronin = false;
+      if (!currentNickName) {
+        nick = true;
+      }
+      if (!currentRoninAddress) {
+        ronin = true;
+      }
+      this.setState({
+        nameInvalid: nick,
+        roninInvalid: ronin,
+      });
     }
-
-    
-    
   };
   handleEditButton = () => {};
 
@@ -85,6 +122,7 @@ export default class ScholarFetch extends Component {
     return (
       <div class={style.container}>
         <input
+          disabled={this.state.loading}
           placeholder="Ronin Address. ex : ronin:57883281c943401af0691e9ce0781af67d83ef51"
           class={style.inputronin}
           onChange={(e) => {
@@ -92,11 +130,16 @@ export default class ScholarFetch extends Component {
               currentRoninAddress: e?.target?.value,
             });
           }}
-          
         />
-        
-        <ErrorText label="Ronin Address must not be empty" hidden={this.state.roninInvalid} />
+
+        {this.state.roninInvalid ? (
+          <ErrorText label={"Ronin Address must not be empty or duplicate"} />
+        ) : (
+          <div class={style.empty}> </div>
+        )}
+
         <input
+          disabled={this.state.loading}
           placeholder="Nick Name ex: Albert D. Einstein"
           class={style.inputronin}
           onChange={(e) => {
@@ -106,9 +149,15 @@ export default class ScholarFetch extends Component {
           }}
           onBlur={() => {}}
         />
-        <ErrorText label="Give me a name pls" hidden={this.state.nameInvalid} />
+        {this.state.nameInvalid ? (
+          <ErrorText label="Name must not be empty or duplicate" />
+        ) : (
+          <div class={style.empty}> </div>
+        )}
+
         <div class={style.innercontainer}>
           <input
+            disabled={this.state.loading}
             type="number"
             placeholder="% Player"
             class={style.inputshare}
@@ -116,6 +165,7 @@ export default class ScholarFetch extends Component {
             onKeyUp={this.handleInput}
           />
           <input
+            disabled={this.state.loading}
             type="number"
             placeholder="% Investor"
             value={this.state.investorShare}
@@ -124,6 +174,7 @@ export default class ScholarFetch extends Component {
           />
           {this.state.edit ? (
             <button
+              disabled={this.state.loading}
               type="submit"
               onClick={this.handleEditButton}
               class={style.addbtn}
