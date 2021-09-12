@@ -60,8 +60,15 @@ class ItemList extends Component {
         ) : (
           <div class={style.itemslpstat}>
             <p class={style.itemtext}>{`${itemData?.ingame_slp} SLP`}</p>
-            <p class={style.itemtextsmall}>{`Last Update ${convertDate(itemData?.lastupdate)}`}</p>
-            <p class={style.itemtextsmall}>{`Next Claim ${convertDate(itemData?.next_claim_timestamp)}`}</p>
+            <div class={style.itempvpcontainer}>
+              <p class={style.itemtextsmall}>{`Last Update ${convertDate(
+                itemData?.lastupdate
+              )}`}</p>
+              <div class={style.hseperate} />
+              <p class={style.itemtextsmall}>{`Next Claim ${convertDate(
+                itemData?.next_claim_timestamp
+              )}`}</p>
+            </div>
           </div>
         )}
       </div>
@@ -81,9 +88,12 @@ export default class ListComponent extends Component {
     const { items } = this.props;
     console.log("items :", items);
     const returnedData = [];
-    for (let a = 0; a < items.length; a += 1) {
-      returnedData.push(<ItemList item={items[a]} />);
+    if (items && items.length > 0) {
+      for (let a = 0; a < items.length; a += 1) {
+        returnedData.push(<ItemList item={items[a]} />);
+      }
     }
+
     return returnedData;
   };
   render() {

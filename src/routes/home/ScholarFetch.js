@@ -1,5 +1,5 @@
 import { h, Component } from "preact";
-import {  addToLocal, fetchAllData } from "../../utils/helpers";
+import {  addToLocal } from "../../utils/helpers";
 import ErrorText from "../../components/errortext";
 import style from "./style.css";
 
@@ -17,23 +17,6 @@ export default class ScholarFetch extends Component {
       nameInvalid: false,
       allData: [],
     };
-  }
-
-  componentDidMount() {
-    // getRoninSlp('ronin:57883281c943401af0691e9ce0781af67d83ef51',() => {});
-    // fetchAllData((res) => {
-    //   console.log("res : ", res);
-    //   this.setState(
-    //     {
-    //       allData: res,
-    //     },
-    //     () => {
-    //       const {component} = this.props;
-    //       component.updateData(res);
-    //       console.log("state :", this.state);
-    //     }
-    //   );
-    // });
   }
 
   handleAddButton = () => {
