@@ -21,17 +21,19 @@ export default class ScholarFetch extends Component {
 
   componentDidMount() {
     // getRoninSlp('ronin:57883281c943401af0691e9ce0781af67d83ef51',() => {});
-    fetchAllData((res) => {
-      console.log("res : ", res);
-      this.setState(
-        {
-          allData: res,
-        },
-        () => {
-          console.log("state :", this.state);
-        }
-      );
-    });
+    // fetchAllData((res) => {
+    //   console.log("res : ", res);
+    //   this.setState(
+    //     {
+    //       allData: res,
+    //     },
+    //     () => {
+    //       const {component} = this.props;
+    //       component.updateData(res);
+    //       console.log("state :", this.state);
+    //     }
+    //   );
+    // });
   }
 
   handleAddButton = () => {
@@ -48,12 +50,16 @@ export default class ScholarFetch extends Component {
         currentNickName,
         playerShare,
         investorShare,
-        () => {
+        (allData) => {
           this.setState({
             loading: false,
             roninInvalid: false,
             duplicate: false,
             nameInvalid: false,
+            allData,
+          },() => {
+            const {component} = this.props;
+            component?.updateData(allData);
           });
         },
         (duplicate) => {

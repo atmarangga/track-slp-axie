@@ -107,7 +107,7 @@ export async function addToLocal(
           jsonCurrentData.dataPlayer.push(item);
           window.localStorage.setItem(data, JSON.stringify(jsonCurrentData));
           if (callBack && callBack instanceof Function) {
-            callBack();
+            callBack(jsonCurrentData);
           }
         } else {
           errorCallback &&
@@ -161,6 +161,16 @@ export async function fetchAllData(callBack) {
   }
 }
 
+export async function getAllLocalData(callBack) {
+  try {
+    const allData = window.localStorage.getItem(data) || "{}";
+    const jsonAllData = JSON.parse(allData);
+    callBack(jsonAllData?.dataPlayer);
+  } catch (e) {
+    // oops
+  }
+}
+
 function checkDuplicate(rnAddress, localData) {
   for (let a = 0; a < localData.length; a += 1) {
     if (localData[a]?.raddr === rnAddress) {
@@ -177,4 +187,10 @@ function checkNickDuplicate(rnNick, localData) {
     }
   }
   return false;
+}
+
+export function convertDate(sec) {
+  const d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+  d.setUTCSeconds(sec);
+  return `${d.getDate()} / ${d.getMonth() + 1} / ${d.getFullYear()}`
 }
