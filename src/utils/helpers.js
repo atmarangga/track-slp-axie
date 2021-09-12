@@ -207,10 +207,16 @@ function checkNickDuplicate(rnNick, localData) {
 export function convertDate(sec) {
   const d = new Date(0); // The 0 there is the key, which sets the date to the epoch
   d.setUTCSeconds(sec);
-  return `${d.getDate()} / ${d.getMonth() + 1} / ${d.getFullYear()}`;
+  return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
+}
+export function add14Days(sec){
+  const d = new Date(0);
+  d.setUTCSeconds(sec);
+  d.setDate(d.getDate()+14);
+  return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
 }
 
-export function fetchAxieGqlDetail(roninAddr) {
+export function fetchAxieGqlDetail(roninAddr, callBack) {
   try {
     let address = roninAddr;
     if (roninAddr.indexOf("ronin:") > -1) {
@@ -289,13 +295,18 @@ export function fetchAxieGqlDetail(roninAddr) {
       }),
     })
       .then((res) => res.json())
-      .then((result) => console.log("____ :: ", result));
+      .then((result) => {
+        console.log("____ :: ", result);
+        if (callBack && callBack instanceof Function) {
+          callBack(result);
+        }
+      });
   } catch (ex) {
     console.log("exception : ", ex);
   }
 }
 
-export async function fetchAxieProfile(roninAddr) {
+export async function fetchAxieProfile(roninAddr, callBack) {
   try {
     fetch(GQL_URL_DATA, {
       method: "POST",
@@ -314,6 +325,9 @@ export async function fetchAxieProfile(roninAddr) {
       .then((res) => res.json())
       .then((result) => {
         console.log("result____ :: ", result);
+        if (callBack && callBack instanceof Function) {
+          callBack(result);
+        }
       });
   } catch (exs) {
     console.log("error : ", exs);

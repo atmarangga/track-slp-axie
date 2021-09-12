@@ -1,6 +1,11 @@
 import { h, Component } from "preact";
 
-import { getRoninSlp, convertDate } from "../../utils/helpers";
+import {
+  convertDate,
+  add14Days,
+  getSlpApiV2,
+  fetchAxieProfile,
+} from "../../utils/helpers";
 import style from "./style.css";
 
 class ItemList extends Component {
@@ -16,11 +21,30 @@ class ItemList extends Component {
     this.handleLoadData();
   }
 
-  populateData = (data) => {
-    this.setState({
-      itemData: data,
-      loading: false,
-    });
+  populateData = async (data) => {
+    console.log("data save : ", data);
+    try {
+      const { item } = this.props;
+      fetchAxieProfile(item?.raddr, (result) => {
+        console.log("detail ? : ", result?.data?.publicProfileWithRoninAddress);
+        this.setState(
+          {
+            itemData: {
+              ...data,
+              ...item,
+              accountId: result?.data?.publicProfileWithRoninAddress?.accountId,
+              name: result?.data?.publicProfileWithRoninAddress?.name,
+            },
+            loading: false,
+          },
+          () => {
+            console.log("this.state : ", this.state);
+          }
+        );
+      });
+    } catch (ex) {
+      console.log("error fetch detail");
+    }
   };
 
   handleLoadData = async () => {
@@ -28,49 +52,59 @@ class ItemList extends Component {
     this.setState({
       loading: true,
     });
-    getRoninSlp(item?.raddr, this.populateData, () => {
+    getSlpApiV2(item?.raddr, this.populateData, () => {
       this.setState({
         loading: false,
       });
-    //   console.log("failed");
+
+      //   console.log("failed");
     });
   };
 
-  handleRefresh = async () => {
+  handleRefresh = async () => {};
 
-  }
+  prepareSLP = () => {};
 
   render() {
     const { loading, itemData } = this.state;
+    const { item } = this.props;
+    const url_marketplace = `https://marketplace.axieinfinity.com/profile/${item.raddr}/axie`;
     return (
       <div class={style.itemcomponent}>
         <div class={style.itemnamecomponent}>
-          <p class={style.itemtext}>{this.props?.item?.nick}</p>
-
+          <p class={style.itemtext}>
+            <b>
+              {this.props?.item?.nick}{" "}
+              {!loading ? `| ${itemData?.name} | ${itemData?.total} SLP` : null}{" "}
+            </b>
+          </p>
           {loading ? (
             <div>
               <p class={style.itemtextsmall}>Loading...</p>
+              <p class={style.itemtextsmall}>``</p>
             </div>
           ) : (
-            <p class={style.itemtextsmall}>
-              {itemData?.next_claim_timestamp
-                ? `Next Claim: ${convertDate(itemData?.next_claim_timestamp)}`
-                : "No Data"}
-            </p>
+            <div class={style}>
+              <a
+                class={style.itemtextsmall}
+                href={url_marketplace}
+                target="_blank"
+                rel=""
+              >
+                {item.raddr}
+              </a>
+              <div class={style.datecontainer}>
+                <p class={style.itemtextsmall}>
+                  Last claimed : {convertDate(itemData?.last_claimed_item_at)}
+                </p>
+                <div class={style.hseperate} />
+                <p class={style.itemtextsmall}>
+                  Next claimed : {add14Days(itemData?.last_claimed_item_at)}
+                </p>
+              </div>
+            </div>
           )}
-          <p class={style.itemtextsmall}>{this.props?.item?.raddr || "-"}</p>
         </div>
-        {loading ? (
-          <></>
-        ) : (
-          <div class={style.itemslpstat}>
-            <p class={style.itemtext}>
-              {itemData?.ingame_slp
-                ? `${itemData?.ingame_slp} SLP`
-                : <div class={style.buttonrefresh} onClick={this.handleRefresh}>Refresh</div>}
-            </p>
-          </div>
-        )}
       </div>
     );
   }

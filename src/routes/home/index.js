@@ -2,7 +2,7 @@ import { h, Component } from "preact";
 import CoingeckoComponent from "./CoinGeckoRes";
 import ScholarFetch from "./ScholarFetch";
 import ListComponent from "./ListComponent";
-import { getAllLocalData, getSlpApiV2, fetchAxieGqlDetail, fetchAxieProfile } from "../../utils/helpers";
+import { getAllLocalData, getSlpApiV2} from "../../utils/helpers";
 
 import style from "./style.css";
 
@@ -18,8 +18,6 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    // fetchAxieGqlDetail("ronin:cfbaf0a7e2e6a3105253278f32acb84c97580faa");
-    // fetchAxieProfile("ronin:57883281c943401af0691e9ce0781af67d83ef51");
     getSlpApiV2("ronin:57883281c943401af0691e9ce0781af67d83ef51");
     getAllLocalData(this.updateData);
   }
