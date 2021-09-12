@@ -66,8 +66,15 @@ export async function getRoninSlp(roninAddress, callBack, callBackError) {
       .then(async (response) => {
         const resultData = await response.text();
         console.log("response data : ", resultData);
+        const rawData = JSON.parse(resultData);
         if (callBack && callBack instanceof Function) {
-          callBack(JSON.parse(resultData)?.walletData);
+          if(rawData?.walletData){
+            callBack(rawData?.walletData);
+          }
+          else if(rawData?.calendar && rawData?.pvpData){
+            callBack(rawData);
+          }
+          
         }
       })
       .catch((err) => {

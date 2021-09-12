@@ -24,7 +24,9 @@ class ItemList extends Component {
     });
   };
 
-  handleLoadData = () => {
+  checkDataEmpty = (data) => {};
+
+  handleLoadData = async () => {
     const { item } = this.props;
     this.setState({
       loading: true,
@@ -61,10 +63,7 @@ class ItemList extends Component {
           <div class={style.itemslpstat}>
             <p class={style.itemtext}>{`${itemData?.ingame_slp} SLP`}</p>
             <div class={style.itempvpcontainer}>
-              <p class={style.itemtextsmall}>{`Last Update ${convertDate(
-                itemData?.lastupdate
-              )}`}</p>
-              <div class={style.hseperate} />
+              
               <p class={style.itemtextsmall}>{`Next Claim ${convertDate(
                 itemData?.next_claim_timestamp
               )}`}</p>
@@ -83,8 +82,8 @@ export default class ListComponent extends Component {
       loading: [],
     };
   }
-  componentDidUpdate(){
-      this.fillList();
+  componentDidUpdate() {
+    this.fillList();
   }
   fillList = () => {
     const { items } = this.props;

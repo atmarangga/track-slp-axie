@@ -55,11 +55,14 @@
   justify-content: flex-start;
   align-content: flex-start;
   padding: 4px;
+  background-color:#fff;
+  margin: 4px 0px;
+  width: 480px;
 }
 .itemnamecomponent{
   display: flex;
   flex-direction: column;
-  
+  width: 50%;
   padding: 0;
   margin: 0;
 }

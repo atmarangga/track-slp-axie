@@ -1,5 +1,5 @@
-import { h, Component } from "preact";
-import {  addToLocal } from "../../utils/helpers";
+import { h, Component, createRef } from "preact";
+import { addToLocal } from "../../utils/helpers";
 import ErrorText from "../../components/errortext";
 import style from "./style.css";
 
@@ -17,6 +17,7 @@ export default class ScholarFetch extends Component {
       nameInvalid: false,
       allData: [],
     };
+    this.allInputRef = createRef();
   }
 
   handleAddButton = () => {
@@ -34,21 +35,26 @@ export default class ScholarFetch extends Component {
         playerShare,
         investorShare,
         (allData) => {
-          console.log('callback allData ', allData);
-          this.setState({
-            loading: false,
-            roninInvalid: false,
-            duplicate: false,
-            nameInvalid: false,
-            allData,
-          },() => {
-            const {component} = this.props;
-            console.log('allData : ', allData);
-            component?.updateData(allData);
-          });
+          // this.allInputRef?.current?.clear();
+          this.setState(
+            {
+              currentRoninAddress: "",
+              loading: false,
+              roninInvalid: false,
+              duplicate: false,
+              nameInvalid: false,
+              currentNickName: "",
+              playerShare: null,
+              investorShare: null,
+              allData,
+            },
+            () => {
+              const { component } = this.props;
+              component?.updateData(allData);
+            }
+          );
         },
         (duplicate) => {
-          console.log("duplicate ::::: ", duplicate);
           if (duplicate) {
             this.setState({
               loading: false,
@@ -113,6 +119,7 @@ export default class ScholarFetch extends Component {
     return (
       <div class={style.container}>
         <input
+          ref={this.allInputRef}
           disabled={this.state.loading}
           placeholder="Ronin Address. ex : ronin:57883281c943401af0691e9ce0781af67d83ef51"
           class={style.inputronin}
@@ -130,6 +137,7 @@ export default class ScholarFetch extends Component {
         )}
 
         <input
+          ref={this.allInputRef}
           disabled={this.state.loading}
           placeholder="Nick Name ex: Albert D. Einstein"
           class={style.inputronin}
@@ -148,6 +156,7 @@ export default class ScholarFetch extends Component {
 
         <div class={style.innercontainer}>
           <input
+            ref={this.allInputRef}
             disabled={this.state.loading}
             type="number"
             placeholder="% Player"
@@ -156,6 +165,7 @@ export default class ScholarFetch extends Component {
             onKeyUp={this.handleInput}
           />
           <input
+            ref={this.allInputRef}
             disabled={this.state.loading}
             type="number"
             placeholder="% Investor"
