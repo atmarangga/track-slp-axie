@@ -107,7 +107,7 @@ export async function addToLocal(
           jsonCurrentData.dataPlayer.push(item);
           window.localStorage.setItem(data, JSON.stringify(jsonCurrentData));
           if (callBack && callBack instanceof Function) {
-            callBack(jsonCurrentData);
+            callBack(jsonCurrentData?.dataPlayer);
           }
         } else {
           errorCallback &&
@@ -125,7 +125,7 @@ export async function addToLocal(
       jsonCurrentData.dataPlayer.push(item);
       window.localStorage.setItem(data, JSON.stringify(jsonCurrentData));
       if (callBack && callBack instanceof Function) {
-        callBack();
+        callBack(jsonCurrentData?.dataPlayer);
       }
     }
   } catch (ex) {

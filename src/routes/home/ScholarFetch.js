@@ -34,6 +34,7 @@ export default class ScholarFetch extends Component {
         playerShare,
         investorShare,
         (allData) => {
+          console.log('callback allData ', allData);
           this.setState({
             loading: false,
             roninInvalid: false,
@@ -42,6 +43,7 @@ export default class ScholarFetch extends Component {
             allData,
           },() => {
             const {component} = this.props;
+            console.log('allData : ', allData);
             component?.updateData(allData);
           });
         },

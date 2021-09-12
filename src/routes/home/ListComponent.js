@@ -83,7 +83,9 @@ export default class ListComponent extends Component {
       loading: [],
     };
   }
-
+  componentDidUpdate(){
+      this.fillList();
+  }
   fillList = () => {
     const { items } = this.props;
     console.log("items :", items);
