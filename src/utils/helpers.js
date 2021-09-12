@@ -208,3 +208,88 @@ export function convertDate(sec) {
   d.setUTCSeconds(sec);
   return `${d.getDate()} / ${d.getMonth() + 1} / ${d.getFullYear()}`;
 }
+
+export function fetchAxieGqlDetail(roninAddr) {
+  try {
+    let address = roninAddr;
+    if (roninAddr.indexOf("ronin:") > -1) {
+      address = roninAddr.replace("ronin:", "0x");
+    }
+
+    fetch("https://graphql-gateway.axieinfinity.com/graphql", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: `query GetAxieBriefList($auctionType: AuctionType, $criteria: AxieSearchCriteria, $from: Int, $sort: SortBy, $size: Int, $owner: String) {
+            axies(auctionType: $auctionType, criteria: $criteria, from: $from, sort: $sort, size: $size, owner: $owner) {
+                  total
+                  results {
+                          ...AxieBrief
+                                __typename
+                                  }
+                                      __typename
+                                      }
+                                    }
+                                    
+                                    fragment AxieBrief on Axie {
+                                        id
+                                          name
+                                            stage
+                                              class
+                                                breedCount
+                                                  image
+                                                    title
+                                                      battleInfo {
+                                                            banned
+                                                                __typename
+                                                                }
+                                                                  auction {
+                                                                        currentPrice
+                                                                            currentPriceUSD
+                                                                                __typename
+                                                                                }
+                                                                                  parts {
+                                                                                        id
+                                                                                            name
+                                                                                                class
+                                                                                                    type
+                                                                                                        specialGenes
+                                                                                                            __typename
+                                                                                                            }
+                                                                                                              __typename
+                                                                                                            }
+                                                                                                            
+      `,
+        variables: {
+          from: 0,
+          size: 24,
+          sort: "IdDesc",
+          auctionType: "All",
+          owner: address,
+          criteria: {
+            region: null,
+            parts: null,
+            bodyShapes: null,
+            classes: null,
+            stages: null,
+            numMystic: null,
+            pureness: null,
+            title: null,
+            breedable: null,
+            breedCount: null,
+            hp: [],
+            skill: [],
+            speed: [],
+            morale: [],
+          },
+        },
+      }),
+    })
+      .then((res) => res.json())
+      .then((result) => console.log("____ :: ", result));
+  } catch (ex) {
+    console.log("exception : ", ex);
+  }
+}
