@@ -2,7 +2,7 @@ import { h, Component } from "preact";
 import CoingeckoComponent from "./CoinGeckoRes";
 import ScholarFetch from "./ScholarFetch";
 import ListComponent from "./ListComponent";
-import { getAllLocalData, fetchAxieGqlDetail } from "../../utils/helpers";
+import { getAllLocalData, getSlpApiV2, fetchAxieGqlDetail, fetchAxieProfile } from "../../utils/helpers";
 
 import style from "./style.css";
 
@@ -11,11 +11,16 @@ class Home extends Component {
     super(props);
     this.state = {
       totalData: [],
+      detailData: [],
+      totalSlp: 0,
+      slpToCurrency: 0,
     };
   }
 
   componentDidMount() {
-    fetchAxieGqlDetail();
+    // fetchAxieGqlDetail("ronin:cfbaf0a7e2e6a3105253278f32acb84c97580faa");
+    // fetchAxieProfile("ronin:57883281c943401af0691e9ce0781af67d83ef51");
+    getSlpApiV2("ronin:57883281c943401af0691e9ce0781af67d83ef51");
     getAllLocalData(this.updateData);
   }
 
@@ -30,6 +35,18 @@ class Home extends Component {
     );
   };
 
+  updateDetailData = (item) => {
+    const {detailData} = this.state;
+    if(detailData.length < 1){
+      detailData.push(item)
+    } else {
+      for(let x = 0; x < detailData.length; x += 1){
+
+      }
+    }
+        
+  }
+
   render() {
     return (
       <div class={style.home}>
@@ -38,7 +55,7 @@ class Home extends Component {
         <div>
           <CoingeckoComponent />
           <ScholarFetch component={this} />
-          <ListComponent items={this.state.totalData} />
+          <ListComponent items={this.state.totalData} component={this} />
         </div>
       </div>
     );

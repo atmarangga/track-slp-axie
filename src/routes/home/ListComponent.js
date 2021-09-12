@@ -36,7 +36,9 @@ class ItemList extends Component {
     });
   };
 
-  handleRefresh() {}
+  handleRefresh = async () => {
+
+  }
 
   render() {
     const { loading, itemData } = this.state;
@@ -64,8 +66,8 @@ class ItemList extends Component {
           <div class={style.itemslpstat}>
             <p class={style.itemtext}>
               {itemData?.ingame_slp
-                ? `${itemData?.ingame_slp || "-"} SLP`
-                : null}
+                ? `${itemData?.ingame_slp} SLP`
+                : <div class={style.buttonrefresh} onClick={this.handleRefresh}>Refresh</div>}
             </p>
           </div>
         )}

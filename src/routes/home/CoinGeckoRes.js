@@ -1,5 +1,10 @@
 import { h, Component } from "preact";
-import { getSLPPrice, getCurrencies } from "../../utils/helpers";
+import {
+  getSLPPrice,
+  getCurrencies,
+  saveCurrency,
+  getCurrency,
+} from "../../utils/helpers";
 
 export default class CoingeckoComponent extends Component {
   constructor(props) {
@@ -13,14 +18,26 @@ export default class CoingeckoComponent extends Component {
   }
 
   componentDidMount() {
-    const { currentCurrency } = this.state;
-    getSLPPrice(currentCurrency, this.onSukses);
+    // const { currentCurrency } = this.state;
+    this.initCurrency();
+    // getSLPPrice(currentCurrency, this.onSukses);
     getCurrencies(this.handlePriceList);
   }
 
   onSukses = (slp_price) => {
     this.setState({
       currentPrice: slp_price,
+    });
+  };
+
+  initCurrency = () => {
+    getCurrency((result) => {
+      if (result) {
+        this.setState({
+          currentCurrency: result,
+        });
+      } 
+      getSLPPrice(result || this.state.currentCurrency, this.onSukses);
     });
   };
 
@@ -50,13 +67,14 @@ export default class CoingeckoComponent extends Component {
         loadingCurrency: true,
       },
       () =>
-        getSLPPrice(e.target.value, (result) =>
+        getSLPPrice(e.target.value, (result) => {
           this.setState({
             currentCurrency: e.target.value,
             currentPrice: result,
             loadingCurrency: false,
-          })
-        )
+          });
+          saveCurrency(e.target.value);
+        })
     );
   };
 
@@ -66,7 +84,7 @@ export default class CoingeckoComponent extends Component {
         <p>
           Currency :{" "}
           {this.state.loadingCurrency ? (
-            'Loading... '
+            "Loading... "
           ) : (
             <select
               value={this.state.currentCurrency}

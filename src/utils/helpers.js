@@ -1,4 +1,5 @@
 const data = "DATA";
+const GQL_URL_DATA = "https://graphql-gateway.axieinfinity.com/graphql";
 const options = {
   method: "GET",
   headers: {
@@ -216,7 +217,7 @@ export function fetchAxieGqlDetail(roninAddr) {
       address = roninAddr.replace("ronin:", "0x");
     }
 
-    fetch("https://graphql-gateway.axieinfinity.com/graphql", {
+    fetch(GQL_URL_DATA, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -264,7 +265,7 @@ export function fetchAxieGqlDetail(roninAddr) {
       `,
         variables: {
           from: 0,
-          size: 24,
+          size: 3,
           sort: "IdDesc",
           auctionType: "All",
           owner: address,
@@ -291,5 +292,73 @@ export function fetchAxieGqlDetail(roninAddr) {
       .then((result) => console.log("____ :: ", result));
   } catch (ex) {
     console.log("exception : ", ex);
+  }
+}
+
+export async function fetchAxieProfile(roninAddr) {
+  try {
+    fetch(GQL_URL_DATA, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        operationName: "GetProfileByRoninAddress",
+        variables: {
+          roninAddress: roninAddr.replace("ronin:", "0x").trim(),
+        },
+        query:
+          "query GetProfileByRoninAddress($roninAddress: String!) {\n  publicProfileWithRoninAddress(roninAddress: $roninAddress) {\n    ...Profile\n    __typename\n  }\n}\n\nfragment Profile on PublicProfile {\n  accountId\n  name\n  addresses {\n    ...Addresses\n    __typename\n  }\n  __typename\n}\n\nfragment Addresses on NetAddresses {\n  ethereum\n  tomo\n  loom\n  ronin\n  __typename\n}\n",
+      }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log("result____ :: ", result);
+      });
+  } catch (exs) {
+    console.log("error : ", exs);
+  }
+}
+
+export async function getSlpApiV2(roninAddr, callBack, callBackError) {
+  const URL_GAME_API = `https://game-api.skymavis.com/game-api/clients/${roninAddr.replace(
+    "ronin:",
+    "0x"
+  )}/items/1`;
+  try {
+    fetch(URL_GAME_API, {
+      method: "GET",
+      headers: {
+        "Content-Type": "text/plain",
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (callBack && callBack instanceof Function) {
+          callBack(result);
+        }
+      });
+  } catch (ex) {
+    if (callBackError && callBackError instanceof Function) {
+      callBackError(ex);
+    }
+  }
+}
+
+export async function saveCurrency(selected) {
+  try {
+    window.localStorage.setItem("currency", selected);
+  } catch (exs) {
+    //
+  }
+}
+
+export async function getCurrency(callBack) {
+  try {
+    if (callBack && callBack instanceof Function) {
+      callBack(window.localStorage.getItem("currency"));
+    }
+  } catch (err) {
+    console.log("err to load currency.");
   }
 }

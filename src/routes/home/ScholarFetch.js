@@ -35,7 +35,6 @@ export default class ScholarFetch extends Component {
         playerShare,
         investorShare,
         (allData) => {
-          // this.allInputRef?.current?.clear();
           this.setState(
             {
               currentRoninAddress: "",
