@@ -17,21 +17,23 @@ class ItemList extends Component {
   }
 
   populateData = (data) => {
-    console.log("data ? ", data);
     this.setState({
       itemData: data,
       loading: false,
     });
   };
 
-  checkDataEmpty = (data) => {};
-
   handleLoadData = async () => {
     const { item } = this.props;
     this.setState({
       loading: true,
     });
-    getRoninSlp(item?.raddr, this.populateData);
+    getRoninSlp(item?.raddr, this.populateData, () => {
+      this.setState({
+        loading: false,
+      });
+    //   console.log("failed");
+    });
   };
 
   handleRefresh() {}
@@ -42,32 +44,29 @@ class ItemList extends Component {
       <div class={style.itemcomponent}>
         <div class={style.itemnamecomponent}>
           <p class={style.itemtext}>{this.props?.item?.nick}</p>
-          <p class={style.itemtextsmall}>{this.props?.item?.raddr}</p>
+
           {loading ? (
-            <p class={style.itemtext}>Loading...</p>
-          ) : (
-            <div class={style.itempvpcontainer}>
-              <p
-                class={style.itemtextsmall}
-              >{`MMR : ${itemData?.pvpData?.elo}`}</p>
-              <div class={style.hseperate} />
-              <p
-                class={style.itemtextsmall}
-              >{`Rank : ${itemData?.pvpData?.rank}`}</p>
+            <div>
+              <p class={style.itemtextsmall}>Loading...</p>
             </div>
+          ) : (
+            <p class={style.itemtextsmall}>
+              {itemData?.next_claim_timestamp
+                ? `Next Claim: ${convertDate(itemData?.next_claim_timestamp)}`
+                : "No Data"}
+            </p>
           )}
+          <p class={style.itemtextsmall}>{this.props?.item?.raddr || "-"}</p>
         </div>
         {loading ? (
           <></>
         ) : (
           <div class={style.itemslpstat}>
-            <p class={style.itemtext}>{`${itemData?.ingame_slp} SLP`}</p>
-            <div class={style.itempvpcontainer}>
-              
-              <p class={style.itemtextsmall}>{`Next Claim ${convertDate(
-                itemData?.next_claim_timestamp
-              )}`}</p>
-            </div>
+            <p class={style.itemtext}>
+              {itemData?.ingame_slp
+                ? `${itemData?.ingame_slp || "-"} SLP`
+                : null}
+            </p>
           </div>
         )}
       </div>
@@ -87,7 +86,7 @@ export default class ListComponent extends Component {
   }
   fillList = () => {
     const { items } = this.props;
-    console.log("items :", items);
+    // console.log("items :", items);
     const returnedData = [];
     if (items && items.length > 0) {
       for (let a = 0; a < items.length; a += 1) {

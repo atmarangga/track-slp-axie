@@ -24,7 +24,7 @@ class Home extends Component {
         totalData: newItem,
       },
       () => {
-        console.log("totalData : ", this.state.totalData);
+        // console.log("totalData : ", this.state.totalData);
       }
     );
   };

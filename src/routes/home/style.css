@@ -54,10 +54,12 @@
   flex-direction: row;
   justify-content: flex-start;
   align-content: flex-start;
-  padding: 4px;
+  padding: 5px;
   background-color:#fff;
   margin: 4px 0px;
   width: 480px;
+  max-width: 95%;
+  
 }
 .itemnamecomponent{
   display: flex;

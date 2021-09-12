@@ -65,20 +65,28 @@ export async function getRoninSlp(roninAddress, callBack, callBackError) {
     })
       .then(async (response) => {
         const resultData = await response.text();
-        console.log("response data : ", resultData);
-        const rawData = JSON.parse(resultData);
-        if (callBack && callBack instanceof Function) {
-          if(rawData?.walletData){
+        let error = false;
+        if (
+          resultData?.messages?.indexOf("unreachable") > -1 ||
+          resultData?.indexOf("Error") > -1
+        ) {
+          callBackError();
+          error = true;
+        }
+
+        if (callBack && callBack instanceof Function && !error) {
+          const rawData = await JSON.parse(resultData);
+
+          if (rawData?.walletData) {
             callBack(rawData?.walletData);
-          }
-          else if(rawData?.calendar && rawData?.pvpData){
+          } else if (rawData?.calendar && rawData?.pvpData) {
             callBack(rawData);
           }
-          
         }
       })
       .catch((err) => {
         //
+
         if (callBackError && callBackError instanceof Function) {
           callBackError(err);
         }
@@ -122,7 +130,6 @@ export async function addToLocal(
             errorCallback(false);
         }
       } else {
-        console.log("duplicate");
         errorCallback &&
           errorCallback instanceof Function &&
           errorCallback(true);
@@ -164,7 +171,7 @@ export async function fetchAllData(callBack) {
       }
     }
   } catch (ex) {
-    console.log("failed to fetch data : ", ex);
+    // console.log("failed to fetch data : ", ex);
   }
 }
 
@@ -199,5 +206,5 @@ function checkNickDuplicate(rnNick, localData) {
 export function convertDate(sec) {
   const d = new Date(0); // The 0 there is the key, which sets the date to the epoch
   d.setUTCSeconds(sec);
-  return `${d.getDate()} / ${d.getMonth() + 1} / ${d.getFullYear()}`
+  return `${d.getDate()} / ${d.getMonth() + 1} / ${d.getFullYear()}`;
 }
