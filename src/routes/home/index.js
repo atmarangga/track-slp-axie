@@ -20,7 +20,13 @@ class Home extends Component {
   componentDidMount() {
     getAllLocalData(this.updateData);
   }
-  
+  componentWillMount(){
+        let script = document.createElement('script');
+        script.setAttribute('data-ad-client','ca-pub-4432250463613785');
+        script.setAttribute('async');
+        script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";           
+        document.getElementsByTagName('head')[0].appendChild(script);
+  }
 
   updateData = (newItem) => {
     this.setState(
