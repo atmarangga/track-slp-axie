@@ -80,7 +80,7 @@ class ItemList extends Component {
     }
     return `| ${itemData?.name} ${itemData?.name ? "|" : " "} ${
       itemData?.total
-    } ${itemData?.total ? "SLP" : null}`;
+    } ${itemData?.total ? "SLP" : ""}`;
   };
 
   populateLastClaimedRow = () => {
@@ -88,11 +88,7 @@ class ItemList extends Component {
     const { item } = this.props;
     const url_marketplace = `https://marketplace.axieinfinity.com/profile/${item.raddr}/axie`;
 
-    if (
-      itemData?.name === undefined ||
-      itemData?.last_claimed_item_at === undefined ||
-      itemData?.last_claimed_item_at <= 0
-    ) {
+    if (itemData?.name === undefined || itemData?.last_claimed_item_at === 0) {
       return (
         <div class={style}>
           <p class={style.itemtextsmall}>{item.raddr}</p>
@@ -186,24 +182,35 @@ export default class ListComponent extends Component {
     super(props);
     this.state = {
       loading: [],
+      allData: [],
     };
   }
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    // this.fillList();
+    if (prevProps.items.length !== this.props.items.length) {
+      this.fillList();
+    }
+  }
+
+  componentDidMount() {
     this.fillList();
   }
+
   fillList = () => {
     const { items, component } = this.props;
-    // console.log("items :", items);
+    console.log("items :", items);
     const returnedData = [];
     if (items && items.length > 0) {
       for (let a = 0; a < items.length; a += 1) {
+        console.log("item iterate : ", items[a]);
         returnedData.push(<ItemList item={items[a]} component={component} />);
       }
     }
-
-    return returnedData;
+    this.setState({
+      allData: returnedData,
+    });
   };
   render() {
-    return <div style={style.containerlist}>{this.fillList()}</div>;
+    return <div style={style.containerlist}>{this.state.allData}</div>;
   }
 }

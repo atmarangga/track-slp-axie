@@ -222,6 +222,7 @@ export async function getAllLocalData(callBack) {
     const allData = window.localStorage.getItem(data) || "{}";
     const jsonAllData = JSON.parse(allData);
     callBack(jsonAllData?.dataPlayer);
+    console.log('dataPlayer ? ', jsonAllData?.dataPlayer);
   } catch (e) {
     // oops
   }
