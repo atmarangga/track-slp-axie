@@ -38,7 +38,7 @@ class ItemList extends Component {
             loading: false,
           },
           () => {
-            console.log("this.state : ", this.state);
+            // console.log("this.state : ", this.state);
           }
         );
       });
@@ -65,17 +65,86 @@ class ItemList extends Component {
 
   prepareSLP = () => {};
 
-  render() {
-    const { loading, itemData } = this.state;
+  populateNickSlpRow = () => {
+    const { itemData } = this.state;
+    console.log("itemData?.name", itemData?.name);
+    console.log("itemData?.total", itemData?.total);
+    if (
+      (itemData?.name === undefined ||
+        itemData?.name === "" ||
+        itemData?.name === null) &&
+      itemData?.total === undefined
+    ) {
+      const noData = `| No data.`;
+      return noData;
+    }
+    return `| ${itemData?.name} ${itemData?.name ? "|" : " "} ${
+      itemData?.total
+    } ${itemData?.total ? "SLP :" : null}`;
+  };
+
+  populateLastClaimedRow = () => {
+    const { itemData } = this.state;
     const { item } = this.props;
     const url_marketplace = `https://marketplace.axieinfinity.com/profile/${item.raddr}/axie`;
+
+    if (
+      itemData?.name === undefined &&
+      itemData?.last_claimed_item_at === undefined
+    ) {
+      return (
+        <div class={style}>
+          <a
+            class={style.itemtextsmall}
+            href={url_marketplace}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {item.raddr}
+          </a>
+          <div class={style.datecontainer}>
+            <p class={style.itemtextsmall}> - </p>
+            <div class={style.hseperate} />
+            <p class={style.itemtextsmall}> </p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div class={style}>
+        <a
+          class={style.itemtextsmall}
+          href={url_marketplace}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {item.raddr}
+        </a>
+        <div class={style.datecontainer}>
+          <p class={style.itemtextsmall}>
+            {`Last claimed : ${convertDate(itemData?.last_claimed_item_at)}`}
+          </p>
+          <div class={style.hseperate} />
+          <p class={style.itemtextsmall}>
+            {`Next claimed : ${add14Days(itemData?.last_claimed_item_at)}`}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
+  removeItem = () => {};
+
+  render() {
+    const { loading } = this.state;
+    const { item } = this.props;
     return (
       <div class={style.itemcomponent}>
         <div class={style.itemnamecomponent}>
           <p class={style.itemtext}>
             <b>
-              {this.props?.item?.nick}{" "}
-              {!loading ? `| ${itemData?.name} | ${itemData?.total} SLP` : null}{" "}
+              {item?.nick} {!loading ? this.populateNickSlpRow() : null}
             </b>
           </p>
           {loading ? (
@@ -84,27 +153,10 @@ class ItemList extends Component {
               <p class={style.itemtextsmall}>``</p>
             </div>
           ) : (
-            <div class={style}>
-              <a
-                class={style.itemtextsmall}
-                href={url_marketplace}
-                target="_blank"
-                rel=""
-              >
-                {item.raddr}
-              </a>
-              <div class={style.datecontainer}>
-                <p class={style.itemtextsmall}>
-                  Last claimed : {convertDate(itemData?.last_claimed_item_at)}
-                </p>
-                <div class={style.hseperate} />
-                <p class={style.itemtextsmall}>
-                  Next claimed : {add14Days(itemData?.last_claimed_item_at)}
-                </p>
-              </div>
-            </div>
+            this.populateLastClaimedRow()
           )}
         </div>
+        <div class={style.itemrightremove} onClick={this.removeItem}>Remove</div>
       </div>
     );
   }

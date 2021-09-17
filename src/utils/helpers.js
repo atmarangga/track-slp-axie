@@ -351,6 +351,11 @@ export async function getSlpApiV2(roninAddr, callBack, callBackError) {
         if (callBack && callBack instanceof Function) {
           callBack(result);
         }
+      })
+      .catch((err) => {
+        if (callBackError && callBackError instanceof Function) {
+          callBackError(err);
+        }    
       });
   } catch (ex) {
     if (callBackError && callBackError instanceof Function) {
