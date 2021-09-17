@@ -2,7 +2,7 @@ import { h, Component } from "preact";
 import CoingeckoComponent from "./CoinGeckoRes";
 import ScholarFetch from "./ScholarFetch";
 import ListComponent from "./ListComponent";
-import { getAllLocalData, getSlpApiV2} from "../../utils/helpers";
+import { getAllLocalData} from "../../utils/helpers";
 
 import style from "./style.css";
 
@@ -48,7 +48,7 @@ class Home extends Component {
   render() {
     return (
       <div class={style.home}>
-        <h1>Ronin SLP Tracking</h1>
+        <h1>Ronin SLP Tracking. Alpha.</h1>
         <h2>Axie Infinity Scholar SLP managment</h2>
         <div>
           <CoingeckoComponent />
