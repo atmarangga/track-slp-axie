@@ -103,25 +103,19 @@ export async function removeFromLocal(roninAddr, callBack, callBackError) {
   try {
     const currentData = window.localStorage.getItem(data) || "{}";
     const jsonCurrentData = JSON.parse(currentData);
-    console.log("parse jsondata : ", jsonCurrentData);
+
     if (jsonCurrentData?.dataPlayer?.length > 0) {
       const playerData = jsonCurrentData?.dataPlayer;
-      console.log(
-        "delete : ",
-        playerData.filter((a) => a.raddr === roninAddr)[0]
-      );
+      
       const indexToDelete = playerData.indexOf(
         playerData.filter((a) => a.raddr === roninAddr)[0]
       );
-      console.log('indexto delete : ', indexToDelete);
+      
       playerData.splice(indexToDelete, 1);
-      console.log('after delete : ', jsonCurrentData.dataPlayer);
+      
       if (playerData === undefined || playerData === null) {
         //empty ?
       }
-
-      // jsonCurrentData.dataPlayer = playerData;
-      console.log("currentData :: ", jsonCurrentData);
       window.localStorage.setItem(data, JSON.stringify(jsonCurrentData));
       if (callBack && callBack instanceof Function) {
         callBack();
@@ -132,7 +126,6 @@ export async function removeFromLocal(roninAddr, callBack, callBackError) {
     if (callBackError && callBackError instanceof Function) {
       callBackError();
     }
-    console.log("failed to save to browser local storage", exception);
   }
 }
 
@@ -153,10 +146,6 @@ export async function addToLocal(
     };
     const currentData = window.localStorage.getItem(data) || "{}";
     const jsonCurrentData = JSON.parse(currentData);
-    console.log('currentData :::: ',jsonCurrentData?.dataPlayer);
-    console.log('ronin : ', ronin);
-    console.log('nick : ', nick);
-    console.log('jsonCurrenctData', jsonCurrentData?.dataPlayer);
     if (jsonCurrentData?.dataPlayer?.length > 0) {
       if (!checkDuplicate(ronin, jsonCurrentData?.dataPlayer)) {
         if (!checkNickDuplicate(nick, jsonCurrentData?.dataPlayer)) {
@@ -176,7 +165,6 @@ export async function addToLocal(
           errorCallback(true);
       }
     } else {
-      console.log('has no duplicate ?')
       jsonCurrentData.dataPlayer = [];
       jsonCurrentData.dataPlayer.push(item);
       window.localStorage.setItem(data, JSON.stringify(jsonCurrentData));
@@ -186,8 +174,7 @@ export async function addToLocal(
     }
   } catch (ex) {
     // failed to load
-
-    console.log("could not get / save data ", ex);
+    // console.log("could not get / save data ", ex);
   }
 }
 // fetch all data from local storage and put on generic table
@@ -222,7 +209,6 @@ export async function getAllLocalData(callBack) {
     const allData = window.localStorage.getItem(data) || "{}";
     const jsonAllData = JSON.parse(allData);
     callBack(jsonAllData?.dataPlayer);
-    console.log('dataPlayer ? ', jsonAllData?.dataPlayer);
   } catch (e) {
     // oops
   }
@@ -247,7 +233,6 @@ function checkNickDuplicate(rnNick, localData) {
 }
 
 export function convertDate(sec) {
-  console.log('sec : ',sec);
   const d = new Date(0); // The 0 there is the key, which sets the date to the epoch
   d.setUTCSeconds(sec);
   return `${d.getDate()}/${
@@ -343,13 +328,12 @@ export function fetchAxieGqlDetail(roninAddr, callBack) {
     })
       .then((res) => res.json())
       .then((result) => {
-        console.log("____ :: ", result);
         if (callBack && callBack instanceof Function) {
           callBack(result);
         }
       });
   } catch (ex) {
-    console.log("exception : ", ex);
+    // console.log("exception : ", ex);
   }
 }
 
@@ -376,7 +360,7 @@ export async function fetchAxieProfile(roninAddr, callBack) {
         }
       });
   } catch (exs) {
-    console.log("error : ", exs);
+    // console.log("error : ", exs);
   }
 }
 
@@ -424,6 +408,6 @@ export async function getCurrency(callBack) {
       callBack(window.localStorage.getItem("currency"));
     }
   } catch (err) {
-    console.log("err to load currency.");
+    // console.log("err to load currency.");
   }
 }

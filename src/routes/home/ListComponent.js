@@ -17,6 +17,7 @@ class ItemList extends Component {
     this.state = {
       loading: false,
       itemData: {},
+      item: {},
     };
   }
 
@@ -30,6 +31,7 @@ class ItemList extends Component {
       fetchAxieProfile(item?.raddr, (result) => {
         this.setState(
           {
+            item,
             itemData: {
               ...data,
               ...item,
@@ -44,7 +46,7 @@ class ItemList extends Component {
         );
       });
     } catch (ex) {
-      console.log("error fetch detail");
+      // console.log("error fetch detail");
     }
   };
 
@@ -56,6 +58,7 @@ class ItemList extends Component {
     getSlpApiV2(item?.raddr, this.populateData, () => {
       this.setState({
         loading: false,
+        item,
       });
 
       //   console.log("failed");
@@ -157,8 +160,8 @@ class ItemList extends Component {
   };
 
   render() {
-    const { loading } = this.state;
-    const { item } = this.props;
+    const { loading, item } = this.state;
+
     return (
       <div class={style.itemcomponent}>
         <div class={style.itemnamecomponent}>
@@ -214,19 +217,18 @@ export default class ListComponent extends Component {
 
   fillList = () => {
     const { items, component } = this.props;
-    console.log("items :", items);
     const returnedData = [];
     if (items && items.length > 0) {
       for (let a = 0; a < items.length; a += 1) {
-        console.log("item iterate : ", items[a]);
         returnedData.push(<ItemList item={items[a]} component={component} />);
       }
     }
-    this.setState({
-      allData: returnedData,
-    });
+    // this.setState({
+    //   allData: returnedData,
+    // });
+    return returnedData;
   };
   render() {
-    return <div style={style.containerlist}>{this.state.allData}</div>;
+    return <div style={style.containerlist}>{this.fillList()}</div>;
   }
 }
