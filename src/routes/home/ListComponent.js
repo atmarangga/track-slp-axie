@@ -6,6 +6,7 @@ import {
   getSlpApiV2,
   fetchAxieProfile,
   removeFromLocal,
+  getAllLocalData,
 } from "../../utils/helpers";
 import style from "./style.css";
 import removeIcon from '../../assets/remove_icon.png';
@@ -137,13 +138,16 @@ class ItemList extends Component {
   removeItem = () => {
     if(confirm('Are you sure you want to delete this item ?')){
       // Delete
-      const {item} = this.props;
-      removeFromLocal(item.raddr)
+      const {item, component} = this.props;
+      removeFromLocal(item.raddr, () => {
+        getAllLocalData(component.updateData);
+      }, () => {})
     } else {
       // Console
     }
   };
 
+  
   render() {
     const { loading } = this.state;
     const { item } = this.props;
@@ -190,12 +194,12 @@ export default class ListComponent extends Component {
     this.fillList();
   }
   fillList = () => {
-    const { items } = this.props;
+    const { items, component } = this.props;
     // console.log("items :", items);
     const returnedData = [];
     if (items && items.length > 0) {
       for (let a = 0; a < items.length; a += 1) {
-        returnedData.push(<ItemList item={items[a]} />);
+        returnedData.push(<ItemList item={items[a]} component={component} />);
       }
     }
 

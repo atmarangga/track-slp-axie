@@ -17,10 +17,13 @@ export default class ScholarFetch extends Component {
       nameInvalid: false,
       allData: [],
     };
-    this.allInputRef = createRef();
   }
 
+  allInputRef = createRef();
+
   handleAddButton = () => {
+    
+
     const { currentNickName, currentRoninAddress, playerShare, investorShare } =
       this.state;
     if (currentNickName && currentRoninAddress) {
@@ -49,6 +52,7 @@ export default class ScholarFetch extends Component {
             },
             () => {
               const { component } = this.props;
+              this.allInputRef.blur();
               component?.updateData(allData);
             }
           );
@@ -70,6 +74,7 @@ export default class ScholarFetch extends Component {
         }
       );
     } else {
+      console.log("current :");
       let nick = false;
       let ronin = false;
       if (!currentNickName) {
@@ -122,6 +127,7 @@ export default class ScholarFetch extends Component {
           disabled={this.state.loading}
           placeholder="Ronin Address. ex : ronin:57883281c943401af0691e9ce0781af67d83ef51"
           class={style.inputronin}
+          value={this.state.currentRoninAddress}
           onChange={(e) => {
             this.setState({
               currentRoninAddress: e?.target?.value,
@@ -136,16 +142,15 @@ export default class ScholarFetch extends Component {
         )}
 
         <input
-          ref={this.allInputRef}
           disabled={this.state.loading}
           placeholder="Nick Name ex: Albert D. Einstein"
           class={style.inputronin}
+          value={this.state.currentNickName}
           onChange={(e) => {
             this.setState({
               currentNickName: e?.target?.value,
             });
           }}
-          onBlur={() => {}}
         />
         {this.state.nameInvalid ? (
           <ErrorText label="Name must not be empty or duplicate" />
@@ -155,7 +160,6 @@ export default class ScholarFetch extends Component {
 
         <div class={style.innercontainer}>
           <input
-            ref={this.allInputRef}
             disabled={this.state.loading}
             type="number"
             placeholder="% Player"
@@ -164,7 +168,6 @@ export default class ScholarFetch extends Component {
             onKeyUp={this.handleInput}
           />
           <input
-            ref={this.allInputRef}
             disabled={this.state.loading}
             type="number"
             placeholder="% Investor"

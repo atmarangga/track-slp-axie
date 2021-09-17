@@ -99,30 +99,40 @@ export async function getRoninSlp(roninAddress, callBack, callBackError) {
   }
 }
 
-export async function removeFromLocal(roninAddr){
-  try{
+export async function removeFromLocal(roninAddr, callBack, callBackError) {
+  try {
     const currentData = window.localStorage.getItem(data) || "{}";
     const jsonCurrentData = JSON.parse(currentData);
-    console.log('parse jsondata : ', jsonCurrentData);
-    if(jsonCurrentData?.dataPlayer?.length > 0){
-      
+    console.log("parse jsondata : ", jsonCurrentData);
+    if (jsonCurrentData?.dataPlayer?.length > 0) {
       const playerData = jsonCurrentData?.dataPlayer;
-      console.log('delete : ', playerData.filter(a => a.raddr === roninAddr)[0]);
-      const indexToDelete = playerData.indexOf(playerData.filter(a => a.raddr === roninAddr)[0]);
+      console.log(
+        "delete : ",
+        playerData.filter((a) => a.raddr === roninAddr)[0]
+      );
+      const indexToDelete = playerData.indexOf(
+        playerData.filter((a) => a.raddr === roninAddr)[0]
+      );
+      console.log('indexto delete : ', indexToDelete);
       playerData.splice(indexToDelete, 1);
-      if(playerData === undefined || playerData === null ){
+      console.log('after delete : ', jsonCurrentData.dataPlayer);
+      if (playerData === undefined || playerData === null) {
         //empty ?
       }
-      
-      // jsonCurrentData.dataPlayer = playerData;
-      console.log('currentData :: ', jsonCurrentData);
-      window.localStorage.setItem('data', JSON.stringify(jsonCurrentData));
-    }
 
-  }catch(exception)
-  {
+      // jsonCurrentData.dataPlayer = playerData;
+      console.log("currentData :: ", jsonCurrentData);
+      window.localStorage.setItem(data, JSON.stringify(jsonCurrentData));
+      if (callBack && callBack instanceof Function) {
+        callBack();
+      }
+    }
+  } catch (exception) {
     // failed to save to localStorage
-    console.log('failed to save to browser local storage', exception);
+    if (callBackError && callBackError instanceof Function) {
+      callBackError();
+    }
+    console.log("failed to save to browser local storage", exception);
   }
 }
 
@@ -143,7 +153,10 @@ export async function addToLocal(
     };
     const currentData = window.localStorage.getItem(data) || "{}";
     const jsonCurrentData = JSON.parse(currentData);
-
+    console.log('currentData :::: ',jsonCurrentData?.dataPlayer);
+    console.log('ronin : ', ronin);
+    console.log('nick : ', nick);
+    console.log('jsonCurrenctData', jsonCurrentData?.dataPlayer);
     if (jsonCurrentData?.dataPlayer?.length > 0) {
       if (!checkDuplicate(ronin, jsonCurrentData?.dataPlayer)) {
         if (!checkNickDuplicate(nick, jsonCurrentData?.dataPlayer)) {
@@ -163,6 +176,7 @@ export async function addToLocal(
           errorCallback(true);
       }
     } else {
+      console.log('has no duplicate ?')
       jsonCurrentData.dataPlayer = [];
       jsonCurrentData.dataPlayer.push(item);
       window.localStorage.setItem(data, JSON.stringify(jsonCurrentData));
@@ -234,13 +248,17 @@ function checkNickDuplicate(rnNick, localData) {
 export function convertDate(sec) {
   const d = new Date(0); // The 0 there is the key, which sets the date to the epoch
   d.setUTCSeconds(sec);
-  return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
+  return `${d.getDate()}/${
+    d.getMonth() + 1
+  }/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
 }
-export function add14Days(sec){
+export function add14Days(sec) {
   const d = new Date(0);
   d.setUTCSeconds(sec);
-  d.setDate(d.getDate()+14);
-  return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
+  d.setDate(d.getDate() + 14);
+  return `${d.getDate()}/${
+    d.getMonth() + 1
+  }/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
 }
 
 export function fetchAxieGqlDetail(roninAddr, callBack) {
@@ -381,7 +399,7 @@ export async function getSlpApiV2(roninAddr, callBack, callBackError) {
       .catch((err) => {
         if (callBackError && callBackError instanceof Function) {
           callBackError(err);
-        }    
+        }
       });
   } catch (ex) {
     if (callBackError && callBackError instanceof Function) {

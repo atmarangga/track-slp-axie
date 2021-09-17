@@ -18,9 +18,9 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    getSlpApiV2("ronin:57883281c943401af0691e9ce0781af67d83ef51");
     getAllLocalData(this.updateData);
   }
+  
 
   updateData = (newItem) => {
     this.setState(
