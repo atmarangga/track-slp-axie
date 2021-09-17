@@ -9,8 +9,8 @@ import {
   getAllLocalData,
 } from "../../utils/helpers";
 import style from "./style.css";
-import removeIcon from '../../assets/remove_icon.png';
-import refreshIcon from '../../assets/refresh_icon.png';
+import removeIcon from "../../assets/remove_icon.png";
+import refreshIcon from "../../assets/refresh_icon.png";
 class ItemList extends Component {
   constructor(props) {
     super(props);
@@ -71,10 +71,9 @@ class ItemList extends Component {
   populateNickSlpRow = () => {
     const { itemData } = this.state;
     if (
-      (itemData?.name === undefined ||
-        itemData?.name === "" ||
-        itemData?.name === null) &&
-      itemData?.total === undefined
+      itemData?.name === undefined ||
+      itemData?.name === "" ||
+      itemData?.name === null
     ) {
       const noData = `| No data.`;
       return noData;
@@ -90,19 +89,13 @@ class ItemList extends Component {
     const url_marketplace = `https://marketplace.axieinfinity.com/profile/${item.raddr}/axie`;
 
     if (
-      itemData?.name === undefined &&
-      itemData?.last_claimed_item_at === undefined
+      itemData?.name === undefined ||
+      itemData?.last_claimed_item_at === undefined ||
+      itemData?.last_claimed_item_at <= 0
     ) {
       return (
         <div class={style}>
-          <a
-            class={style.itemtextsmall}
-            href={url_marketplace}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {item.raddr}
-          </a>
+          <p class={style.itemtextsmall}>{item.raddr}</p>
           <div class={style.datecontainer}>
             <p class={style.itemtextsmall}> - </p>
             <div class={style.hseperate} />
@@ -136,18 +129,21 @@ class ItemList extends Component {
   };
 
   removeItem = () => {
-    if(confirm('Are you sure you want to delete this item ?')){
+    if (confirm("Are you sure you want to delete this item ?")) {
       // Delete
-      const {item, component} = this.props;
-      removeFromLocal(item.raddr, () => {
-        getAllLocalData(component.updateData);
-      }, () => {})
+      const { item, component } = this.props;
+      removeFromLocal(
+        item.raddr,
+        () => {
+          getAllLocalData(component.updateData);
+        },
+        () => {}
+      );
     } else {
       // Console
     }
   };
 
-  
   render() {
     const { loading } = this.state;
     const { item } = this.props;
@@ -168,16 +164,18 @@ class ItemList extends Component {
             this.populateLastClaimedRow()
           )}
         </div>
-        {loading ? <div /> :
-        <div class={style.editcontainer}>
-          <div class={style.itemright} onClick={this.handleRefresh}>
-          <img src={refreshIcon} class={style.icon} />
+        {loading ? (
+          <div />
+        ) : (
+          <div class={style.editcontainer}>
+            <div class={style.itemright} onClick={this.handleRefresh}>
+              <img src={refreshIcon} class={style.icon} />
+            </div>
+            <div class={style.itemright} onClick={this.removeItem}>
+              <img src={removeIcon} class={style.icon} />
+            </div>
           </div>
-          <div class={style.itemright} onClick={this.removeItem}>
-            <img src={removeIcon} class={style.icon} />
-          </div>
-        </div>
-        }
+        )}
       </div>
     );
   }

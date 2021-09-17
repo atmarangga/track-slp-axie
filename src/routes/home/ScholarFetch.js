@@ -1,5 +1,5 @@
 import { h, Component, createRef } from "preact";
-import { addToLocal } from "../../utils/helpers";
+import { addToLocal, getAllLocalData } from "../../utils/helpers";
 import ErrorText from "../../components/errortext";
 import style from "./style.css";
 
@@ -52,8 +52,7 @@ export default class ScholarFetch extends Component {
             },
             () => {
               const { component } = this.props;
-              this.allInputRef.blur();
-              component?.updateData(allData);
+              getAllLocalData(component?.updateData(allData));
             }
           );
         },
@@ -74,7 +73,6 @@ export default class ScholarFetch extends Component {
         }
       );
     } else {
-      console.log("current :");
       let nick = false;
       let ronin = false;
       if (!currentNickName) {
