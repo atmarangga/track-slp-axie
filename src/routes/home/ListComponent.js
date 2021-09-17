@@ -5,9 +5,11 @@ import {
   add14Days,
   getSlpApiV2,
   fetchAxieProfile,
+  removeFromLocal,
 } from "../../utils/helpers";
 import style from "./style.css";
-
+import removeIcon from '../../assets/remove_icon.png';
+import refreshIcon from '../../assets/refresh_icon.png';
 class ItemList extends Component {
   constructor(props) {
     super(props);
@@ -22,11 +24,9 @@ class ItemList extends Component {
   }
 
   populateData = async (data) => {
-    console.log("data save : ", data);
     try {
       const { item } = this.props;
       fetchAxieProfile(item?.raddr, (result) => {
-        console.log("detail ? : ", result?.data?.publicProfileWithRoninAddress);
         this.setState(
           {
             itemData: {
@@ -61,14 +61,14 @@ class ItemList extends Component {
     });
   };
 
-  handleRefresh = async () => {};
+  handleRefresh = async () => {
+    this.handleLoadData();
+  };
 
   prepareSLP = () => {};
 
   populateNickSlpRow = () => {
     const { itemData } = this.state;
-    console.log("itemData?.name", itemData?.name);
-    console.log("itemData?.total", itemData?.total);
     if (
       (itemData?.name === undefined ||
         itemData?.name === "" ||
@@ -80,7 +80,7 @@ class ItemList extends Component {
     }
     return `| ${itemData?.name} ${itemData?.name ? "|" : " "} ${
       itemData?.total
-    } ${itemData?.total ? "SLP :" : null}`;
+    } ${itemData?.total ? "SLP" : null}`;
   };
 
   populateLastClaimedRow = () => {
@@ -134,7 +134,15 @@ class ItemList extends Component {
     );
   };
 
-  removeItem = () => {};
+  removeItem = () => {
+    if(confirm('Are you sure you want to delete this item ?')){
+      // Delete
+      const {item} = this.props;
+      removeFromLocal(item.raddr)
+    } else {
+      // Console
+    }
+  };
 
   render() {
     const { loading } = this.state;
@@ -156,7 +164,16 @@ class ItemList extends Component {
             this.populateLastClaimedRow()
           )}
         </div>
-        <div class={style.itemrightremove} onClick={this.removeItem}>Remove</div>
+        {loading ? <div /> :
+        <div class={style.editcontainer}>
+          <div class={style.itemright} onClick={this.handleRefresh}>
+          <img src={refreshIcon} class={style.icon} />
+          </div>
+          <div class={style.itemright} onClick={this.removeItem}>
+            <img src={removeIcon} class={style.icon} />
+          </div>
+        </div>
+        }
       </div>
     );
   }

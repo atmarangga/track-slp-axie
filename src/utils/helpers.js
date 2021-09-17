@@ -99,6 +99,33 @@ export async function getRoninSlp(roninAddress, callBack, callBackError) {
   }
 }
 
+export async function removeFromLocal(roninAddr){
+  try{
+    const currentData = window.localStorage.getItem(data) || "{}";
+    const jsonCurrentData = JSON.parse(currentData);
+    console.log('parse jsondata : ', jsonCurrentData);
+    if(jsonCurrentData?.dataPlayer?.length > 0){
+      
+      const playerData = jsonCurrentData?.dataPlayer;
+      console.log('delete : ', playerData.filter(a => a.raddr === roninAddr)[0]);
+      const indexToDelete = playerData.indexOf(playerData.filter(a => a.raddr === roninAddr)[0]);
+      playerData.splice(indexToDelete, 1);
+      if(playerData === undefined || playerData === null ){
+        //empty ?
+      }
+      
+      // jsonCurrentData.dataPlayer = playerData;
+      console.log('currentData :: ', jsonCurrentData);
+      window.localStorage.setItem('data', JSON.stringify(jsonCurrentData));
+    }
+
+  }catch(exception)
+  {
+    // failed to save to localStorage
+    console.log('failed to save to browser local storage', exception);
+  }
+}
+
 export async function addToLocal(
   ronin,
   nick,
@@ -324,7 +351,6 @@ export async function fetchAxieProfile(roninAddr, callBack) {
     })
       .then((res) => res.json())
       .then((result) => {
-        console.log("result____ :: ", result);
         if (callBack && callBack instanceof Function) {
           callBack(result);
         }
