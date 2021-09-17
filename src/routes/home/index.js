@@ -2,7 +2,7 @@ import { h, Component } from "preact";
 import CoingeckoComponent from "./CoinGeckoRes";
 import ScholarFetch from "./ScholarFetch";
 import ListComponent from "./ListComponent";
-import { getAllLocalData} from "../../utils/helpers";
+import { getAllLocalData } from "../../utils/helpers";
 
 import style from "./style.css";
 
@@ -20,12 +20,15 @@ class Home extends Component {
   componentDidMount() {
     getAllLocalData(this.updateData);
   }
-  componentWillMount(){
-        let script = document.createElement('script');
-        script.setAttribute('data-ad-client','ca-pub-4432250463613785');
-        script.setAttribute('async');
-        script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";           
-        document.getElementsByTagName('head')[0].appendChild(script);
+  componentWillMount() {
+    if (typeof window !== "undefined") {
+      let script = document.createElement("script");
+      script.setAttribute("data-ad-client", "ca-pub-4432250463613785");
+      script.setAttribute("async");
+      script.src =
+        "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    }
   }
 
   updateData = (newItem) => {
@@ -40,16 +43,13 @@ class Home extends Component {
   };
 
   updateDetailData = (item) => {
-    const {detailData} = this.state;
-    if(detailData.length < 1){
-      detailData.push(item)
+    const { detailData } = this.state;
+    if (detailData.length < 1) {
+      detailData.push(item);
     } else {
-      for(let x = 0; x < detailData.length; x += 1){
-
-      }
+      for (let x = 0; x < detailData.length; x += 1) {}
     }
-        
-  }
+  };
 
   render() {
     return (
