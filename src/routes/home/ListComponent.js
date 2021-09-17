@@ -88,10 +88,26 @@ class ItemList extends Component {
     const { item } = this.props;
     const url_marketplace = `https://marketplace.axieinfinity.com/profile/${item.raddr}/axie`;
 
-    if (itemData?.name === undefined || itemData?.last_claimed_item_at === 0) {
+    if (
+      itemData?.name === undefined ||
+      itemData?.last_claimed_item_at === 0 ||
+      itemData?.last_claimed_item_at === undefined
+    ) {
       return (
         <div class={style}>
-          <p class={style.itemtextsmall}>{item.raddr}</p>
+          {itemData?.name ? (
+            <a
+              class={style.itemtextsmall}
+              href={url_marketplace}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {item.raddr}
+            </a>
+          ) : (
+            <p class={style.itemtextsmall}>{item.raddr}</p>
+          )}
+
           <div class={style.datecontainer}>
             <p class={style.itemtextsmall}> - </p>
             <div class={style.hseperate} />
